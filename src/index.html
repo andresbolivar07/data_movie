@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buscador de Películas</title>
+</head>
+<body>
+    <h1>Buscador de Películas</h1>
+    <input type="text" id="tituloInput" placeholder="Ingrese el título de la película">
+    <button onclick="buscarPelicula()">Buscar</button>
+    <div id="resultado">
+        <!-- Aquí se mostrarán los detalles de la película -->
+    </div>
+
+    <script>
+        // Tu clave de API de TMDB
+        const api_key = '1916edaad651e866b8b259af1d4c68de';
+
+        function buscarPelicula() {
+            const titulo = document.getElementById('tituloInput').value;
+            const url = `https://api.themoviedb.org/3/search/movie?api_key=${api_key}&query=${titulo}`;
+
+            // Realiza la solicitud a la API
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const resultado = document.getElementById('resultado');
+                    resultado.innerHTML = '';
+
+                    // Verifica si se encontraron resultados
+                    if (data.results && data.results.length > 0) {
+                        const primeraPelicula = data.results[0];
+                        const titulo = primeraPelicula.title;
+                        const fechaEstreno = primeraPelicula.release_date;
+                        const sinopsis = primeraPelicula.overview;
+
+                        const detallesPelicula = `
+                            <h2>${titulo}</h2>
+                            <p>Fecha de Estreno: ${fechaEstreno}</p>
+                            <p>Sinopsis: ${sinopsis}</p>
+                        `;
+
+                        resultado.innerHTML = detallesPelicula;
+                    } else {
+                        resultado.innerHTML = 'No se encontraron resultados para la búsqueda.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al conectarse a la API de TMDB:', error);
+                });
+        }
+    </script>
+</body>
+</html>
